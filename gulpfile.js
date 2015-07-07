@@ -10,17 +10,37 @@ var gulp          = require('gulp'),
     plumber       = require('gulp-plumber'),
     autoprefixer  = require('gulp-autoprefixer'),
     del           = require('del'),
-    rename        = require('gulp-rename');
+    rename        = require('gulp-rename'),
+    imagemin      = require('gulp-imagemin'),
+    pngquant      = require('imagemin-pngquant');
 
 // =====================================
-// Normalize.scss Task
+// Copy Task
 // =====================================
 
-gulp.task('normalize', function() {
+gulp.task('copy', function() {
   gulp.src('bower_components/normalize.css/normalize.css')
     .pipe(plumber())
     .pipe(rename('scss/1-base/_normalize.scss'))
     .pipe(gulp.dest('./app/assets'));
+  return gulp.src('app/*.{ico,txt}')
+      .pipe(gulp.dest('dist/'));
+});
+
+
+// =====================================
+// Imagemin Task
+// =====================================
+
+gulp.task('images', function () {
+  return gulp.src('app/assets/img/**/*.+(png|jpg|jpeg|gif|svg)')
+    .pipe(imagemin({
+      progressive: true,
+      svgoPlugins: [{removeViewBox: false}],
+      use: [pngquant()]
+    }))
+    .pipe(gulp.dest('dist/img'))
+    .pipe(reload({stream:true}));
 });
 
 // =====================================
@@ -32,7 +52,7 @@ gulp.task('sass', function() {
     .pipe(plumber())
     .pipe(sass({outputStyle: 'compressed'}))
     .pipe(autoprefixer('last 2 versions'))
-    .pipe(gulp.dest('app/assets/css/'))
+    .pipe(gulp.dest('dist/css/'))
     .pipe(reload({stream:true}));
 });
 
@@ -42,7 +62,8 @@ gulp.task('sass', function() {
 
 gulp.task('html', function() {
   gulp.src('app/**/*.html')
-  .pipe(reload({stream:true}));
+   .pipe(gulp.dest('dist/'))
+   .pipe(reload({stream:true}));
 });
 
 
@@ -60,7 +81,7 @@ gulp.task('build:delete', function(callback) {
 
 // Create build directory for all files
 gulp.task('build:copy', ['build:delete'], function() {
-  return gulp.src('app/**/*/')
+  return gulp.src('dist/**/*/')
   .pipe(gulp.dest('build/'));
 });
 
@@ -82,7 +103,7 @@ gulp.task('build', ['build:copy', 'build:remove']);
 gulp.task('browser-sync', function() {
     browserSync({
       server:{
-        baseDir: "./app/"
+        baseDir: "./dist/"
       }
     });
 });
@@ -106,7 +127,7 @@ gulp.task('scripts', function() {
     .pipe(plumber())
     .pipe(rename({suffix:'.min'}))
     .pipe(uglify())
-    .pipe(gulp.dest('app/assets/js'))
+    .pipe(gulp.dest('dist/js'))
     .pipe(reload({stream:true}));
 });
 
@@ -117,6 +138,7 @@ gulp.task('scripts', function() {
 gulp.task('watch', function() {
   gulp.watch('app/assets/js/**/*.js', ['scripts']);
   gulp.watch('app/assets/scss/**/*.scss', ['sass']);
+  gulp.watch('app/assets/img/**/*', ['images']);
   gulp.watch('app/**/*.html', ['html']);
 });
 
@@ -124,4 +146,4 @@ gulp.task('watch', function() {
 // Default Task
 // =====================================
 
-gulp.task('default', ['normalize', 'sass', 'scripts', 'html', 'browser-sync', 'watch']);
+gulp.task('default', ['copy', 'sass', 'scripts', 'images', 'html', 'browser-sync', 'watch']);
