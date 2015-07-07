@@ -1,0 +1,20 @@
+{
+  "name": "starterkit_v1",
+  "version": "1.0.0",
+  "homepage": "https://github.com/devoidofgenius/DevStarterKit",
+  "authors": [
+    "Your Name <youremail@example.com>"
+  ],
+  "license": "GPLv2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "normalize.css": "~3.0.3"
+  }
+}
