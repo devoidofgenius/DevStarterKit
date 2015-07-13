@@ -37,21 +37,25 @@ npm install -g gulp
 ## How to use the DevStarterKit
 
 **Clone starterkit repository**
+
 *Rename myproject to whatever you wish your folder to be called*
 ```
 git clone https://github.com/devoidofgenius/DevStarterKit.git myproject
 ```
 **Install Bower Components**
+
 *Inside project directory*
 ```
 bower install
 ```
 **Install Node Modules**
+
 *Inside project directory*
 ```
 npm install
 ```
 **Gulp**
+
 *Running the default gulp task starts development mode*
 ```
 gulp
