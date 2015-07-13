@@ -22,9 +22,9 @@ gulp.task('copy', function() {
   gulp.src('bower_components/normalize.css/normalize.css')
     .pipe(plumber())
     .pipe(rename('scss/1-base/_normalize.scss'))
-    .pipe(gulp.dest('./app/assets'));
-  return gulp.src('app/*.{ico,txt}')
-      .pipe(gulp.dest('dist/'));
+    .pipe(gulp.dest('./dist/assets'));
+  return gulp.src('dist/*.{ico,txt}')
+      .pipe(gulp.dest('dev/'));
 });
 
 
@@ -33,13 +33,13 @@ gulp.task('copy', function() {
 // =====================================
 
 gulp.task('images', function () {
-  return gulp.src('app/assets/img/**/*.+(png|jpg|jpeg|gif|svg)')
+  return gulp.src('dist/assets/img/**/*.+(png|jpg|jpeg|gif|svg)')
     .pipe(imagemin({
       progressive: true,
       svgoPlugins: [{removeViewBox: false}],
       use: [pngquant()]
     }))
-    .pipe(gulp.dest('dist/img'))
+    .pipe(gulp.dest('dev/img'))
     .pipe(reload({stream:true}));
 });
 
@@ -48,11 +48,11 @@ gulp.task('images', function () {
 // =====================================
 
 gulp.task('sass', function() {
-  gulp.src('app/assets/scss/main.scss')
+  gulp.src('dist/assets/scss/main.scss')
     .pipe(plumber())
     .pipe(sass({outputStyle: 'compressed'}))
     .pipe(autoprefixer('last 2 versions'))
-    .pipe(gulp.dest('dist/css/'))
+    .pipe(gulp.dest('dev/css/'))
     .pipe(reload({stream:true}));
 });
 
@@ -61,39 +61,39 @@ gulp.task('sass', function() {
 // =====================================
 
 gulp.task('html', function() {
-  gulp.src('app/**/*.html')
-   .pipe(gulp.dest('dist/'))
+  gulp.src('dist/**/*.html')
+   .pipe(gulp.dest('dev/'))
    .pipe(reload({stream:true}));
 });
 
 
 // =====================================
-// Build Tasks
+// Production Tasks
 // =====================================
 
-// Delete all files and folders from build directory
-gulp.task('build:delete', function(callback) {
+// Delete all files and folders from production directory
+gulp.task('production:delete', function(callback) {
   del([
-    'build/**'
+    'prod/**'
   ], callback);
 });
 
 
-// Create build directory for all files
-gulp.task('build:copy', ['build:delete'], function() {
-  return gulp.src('dist/**/*/')
-  .pipe(gulp.dest('build/'));
+// Create production directory for all files
+gulp.task('production:copy', ['production:delete'], function() {
+  return gulp.src('dev/**/*/')
+  .pipe(gulp.dest('prod/'));
 });
 
-// Remove unwanted files from build directory
-gulp.task('build:remove', ['build:copy'], function(callback) {
+// Remove unwanted files from production directory
+gulp.task('production:remove', ['production:copy'], function(callback) {
   del([
-    'build/assets/scss/',
-    'build/assets/js/!(*.min.js)'
+    'prod/assets/scss/',
+    'prod/assets/js/!(*.min.js)'
   ], callback);
 });
 
-gulp.task('build', ['build:copy', 'build:remove']);
+gulp.task('production', ['production:copy', 'production:remove']);
 
 
 // =====================================
@@ -103,16 +103,16 @@ gulp.task('build', ['build:copy', 'build:remove']);
 gulp.task('browser-sync', function() {
     browserSync({
       server:{
-        baseDir: "./dist/"
+        baseDir: "./dev/"
       }
     });
 });
 
-// Final build server
-gulp.task('build:server', function() {
+// Final production server
+gulp.task('production:server', function() {
     browserSync({
       server:{
-        baseDir: "./build/"
+        baseDir: "./prod/"
       }
     });
 });
@@ -123,11 +123,11 @@ gulp.task('build:server', function() {
 // =====================================
 
 gulp.task('scripts', function() {
-  gulp.src(['app/assets/js/**/*.js', '!app/assets/js/**/*.min.js'])
+  gulp.src(['dist/assets/js/**/*.js', '!dist/assets/js/**/*.min.js'])
     .pipe(plumber())
     .pipe(rename({suffix:'.min'}))
     .pipe(uglify())
-    .pipe(gulp.dest('dist/js'))
+    .pipe(gulp.dest('dev/js'))
     .pipe(reload({stream:true}));
 });
 
@@ -136,10 +136,10 @@ gulp.task('scripts', function() {
 // =====================================
 
 gulp.task('watch', function() {
-  gulp.watch('app/assets/js/**/*.js', ['scripts']);
-  gulp.watch('app/assets/scss/**/*.scss', ['sass']);
-  gulp.watch('app/assets/img/**/*', ['images']);
-  gulp.watch('app/**/*.html', ['html']);
+  gulp.watch('dist/assets/js/**/*.js', ['scripts']);
+  gulp.watch('dist/assets/scss/**/*.scss', ['sass']);
+  gulp.watch('dist/assets/img/**/*', ['images']);
+  gulp.watch('dist/**/*.html', ['html']);
 });
 
 // =====================================
