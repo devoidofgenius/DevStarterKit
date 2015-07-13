@@ -46,6 +46,11 @@ git clone https://github.com/devoidofgenius/DevStarterKit.git myproject
 ```
 bower install
 ```
+**Install Node Modules**
+*Inside project directory*
+```
+npm install
+```
 **Gulp**
 *Running the default gulp task starts development mode*
 ```
@@ -55,4 +60,3 @@ gulp
 ```
 gulp production
 ```
-
